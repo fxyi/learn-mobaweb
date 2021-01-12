@@ -10,8 +10,7 @@
           class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
           :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
+          :on-success="afterUpload"
         >
           <img v-if="form.icon" :src="form.icon" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -63,6 +62,9 @@ export default {
       setTimeout(() => {
         this.$router.push('/item/list')
       }, 1000)
+    },
+    afterUpload () {
+      
     }
   }
 }

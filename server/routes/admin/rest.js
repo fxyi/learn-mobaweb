@@ -1,5 +1,6 @@
 const express = require('express')
 const inflection = require('inflection')
+const assert = require('http-assert')
 
 // 子路由
 const router = express.Router({
@@ -9,22 +10,31 @@ const router = express.Router({
 // const Category = require('../../modules/Category')
 
 module.exports = app => {
-  app.use('/admin/api/rest/:resource', async (req, res, next) => {
-    // categories => Category
-    const modelName = inflection.classify(req.params.resource)
-    req.Model = require(`../../modules/${modelName}`)
-    next()
-  }, router)
+  app.use('/admin/api/rest/:resource',
+    async (req, res, next) => {
+      const token = String(req.headers.authorization || '').split(' ').pop()
+      console.log(token)
+      next()
+    },
+    // 路径解析
+    async (req, res, next) => {
+      // categories => Category
+      const modelName = inflection.classify(req.params.resource)
+      req.Model = require(`../../modules/${modelName}`)
+      next()
+    },
+    router)
 
-  // 新建分类
+  // 新增
   router.post('/', async (req, res) => {
-    const { name, parent } = req.body
-    const data = {
-      name
-    }
-    if (parent) {
-      data.parent = parent
-    }
+    const data = req.body
+    // const { name, parent } = req.body
+    // const data = {
+    //   name
+    // }
+    // if (parent) {
+    //   data.parent = parent
+    // }
     const model = await req.Model.create(data)
     res.send(model)
   })
@@ -58,5 +68,4 @@ module.exports = app => {
       success: true
     })
   })
-
 }
